@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>実績進捗管理ツール (全46項目)</title>
+    <style>
+        /* 基本的なページスタイル */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        /* テーブルのスタイル */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse; /* ボーダーを重ねる */
+            margin-top: 25px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden; /* 角丸を有効にするため */
+        }
+
+        /* テーブルのヘッダーとデータセル */
+        .task-table th, .task-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: middle;
+            font-size: 14px; /* 文字サイズを少し調整 */
+        }
+        
+        /* テーブルヘッダーのスタイル */
+        .task-table thead th {
+            background-color: #34495e;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        /* 各列の幅を調整 */
+        .col-check { width: 4%; text-align: center; }
+        .col-name  { width: 26%; }
+        .col-map   { width: 12%; }
+        .col-details{ width: 38%; }
+        .col-notes { width: 20%; }
+
+        /* チェックボックスのスタイル */
+        .task-table input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* 実績名のラベル */
+        .task-table label {
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* 最後の行のボーダーを消す */
+        .task-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 進捗バーのコンテナ */
+        .progress-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: sticky; /* スクロールしても追従するように */
+            top: 10px;
+            z-index: 10;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 25px;
+            background-color: #007bff;
+            text-align: center;
+            line-height: 25px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏆 Pogo Legendへの道 🏆</h1>
+
+    <div class="progress-container">
+        <h2>現在の達成率: <span id="progress-text">0%</span></h2>
+        <div class="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <table class="task-table" id="taskTable">
+        <thead>
+            <tr>
+                <th class="col-check">✔</th>
+                <th class="col-name">実績名</th>
+                <th class="col-map">MAP</th>
+                <th class="col-details">詳細</th>
+                <th class="col-notes">備考</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><input type="checkbox" id="task1"></td><td><label for="task1">🗺️ Map 1 クリア</label></td><td>Map 1</td><td>最初のマップをクリアする</td><td>基本操作の習得</td></tr>
+            <tr><td><input type="checkbox" id="task2"></td><td><label for="task2">⛰️ Map 2 クリア</label></td><td>Map 2</td><td>2番目のマップをクリアする</td><td>高難易度エリアあり</td></tr>
+            <tr><td><input type="checkbox" id="task3"></td><td><label for="task3">🧊 Map 3 クリア</label></td><td>Map 3</td><td>3番目のマップをクリアする</td><td>滑る床に注意</td></tr>
+            <tr><td><input type="checkbox" id="task4"></td><td><label for="task4">👻 インビジブルモード Map 1</label></td><td>Map 1</td><td>透明な状態でMap 1をクリアする</td><td>衣装アンロック</td></tr>
+            <tr><td><input type="checkbox" id="task5"></td><td><label for="task5">👻 インビジブルモード Map 2</label></td><td>Map 2</td><td>透明な状態でMap 2をクリアする</td><td>精神力が試される</td></tr>
+            <tr><td><input type="checkbox" id="task6"></td><td><label for="task6">👻 インビジブルモード Map 3</label></td><td>Map 3</td><td>透明な状態でMap 3をクリアする</td><td>最難関の一つ</td></tr>
+            <tr><td><input type="checkbox" id="task7"></td><td><label for="task7">⏱️ Map 1 タイムアタック (10分)</label></td><td>Map 1</td><td>10分以内にMap 1をクリアする</td><td>ルートの最適化</td></tr>
+            <tr><td><input type="checkbox" id="task8"></td><td><label for="task8">⏱️ Map 2 タイムアタック (20分)</label></td><td>Map 2</td><td>20分以内にMap 2をクリアする</td><td>ショートカットの知識</td></tr>
+            <tr><td><input type="checkbox" id="task9"></td><td><label for="task9">⏱️ Map 3 タイムアタック (30分)</label></td><td>Map 3</td><td>30分以内にMap 3をクリアする</td><td>ミスは許されない</td></tr>
+            <tr><td><input type="checkbox" id="task10"></td><td><label for="task10">👕 ワードローブコンプリート</label></td><td>全般</td><td>全ての衣装を収集する</td><td>隠し要素含む</td></tr>
+            <tr><td><input type="checkbox" id="task11"></td><td><label for="task11">⭐ レベル100到達</label></td><td>全般</td><td>プレイヤーレベルを100まで上げる</td><td>継続は力なり</td></tr>
+            <tr><td><input type="checkbox" id="task12"></td><td><label for="task12">⭐ レベル200到達</label></td><td>全般</td><td>プレイヤーレベルを200まで上げる</td><td>ポゴマスター条件</td></tr>
+            <tr><td><input type="checkbox" id="task13"></td><td><label for="task13">💎 全ての宝石を収集</label></td><td>全般</td><td>各マップに隠された宝石を全て見つける</td><td>探索が必要</td></tr>
+            <tr><td><input type="checkbox" id="task14"></td><td><label for="task14">GNOMEコレクター</label></td><td>全般</td><td>全ての隠しノームを発見する</td><td>意外な場所に…</td></tr>
+            <tr><td><input type="checkbox" id="task15"></td><td><label for="task15">無落下クリア (Map 1)</label></td><td>Map 1</td><td>一度も落下せずにMap 1をクリアする</td><td>集中力が大事</td></tr>
+            <tr><td><input type="checkbox" id="task16"></td><td><label for="task16">到達高度 1000m</label></td><td>全般</td><td>ジャンプで高度1000mに到達する</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task17"></td><td><label for="task17">到達高度 5000m</label></td><td>全般</td><td>ジャンプで高度5000mに到達する</td><td>Map 2 or 3</td></tr>
+            <tr><td><input type="checkbox" id="task18"></td><td><label for="task18">総プレイ時間 100時間</label></td><td>全般</td><td>合計プレイ時間が100時間を超える</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task19"></td><td><label for="task19">総プレイ時間 500時間</label></td><td>全般</td><td>合計プレイ時間が500時間を超える</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task20"></td><td><label for="task20">10000回落下</label></td><td>全般</td><td>合計10000回以上落下する</td><td>失敗は成功のもと</td></tr>
+            <tr><td><input type="checkbox" id="task21"></td><td><label for="task21">協力モードクリア</label></td><td>協力MAP</td><td>2人協力モードのマップをクリアする</td><td>フレンドが必要</td></tr>
+            <tr><td><input type="checkbox" id="task22"></td><td><label for="task22">スネークショートカット (Map 1)</label></td><td>Map 1</td><td>有名なスネークショートカットを成功させる</td><td>高難度テクニック</td></tr>
+            <tr><td><input type="checkbox" id="task23"></td><td><label for="task23">氷柱エリアのショートカット (Map 3)</label></td><td>Map 3</td><td>氷柱エリアの壁抜けショートカットを成功させる</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task24"></td><td><label for="task24">開発者ルーム発見</label></td><td>???</td><td>隠された開発者ルームを見つける</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task25"></td><td><label for="task25">1回のジャンプで3600度回転</label></td><td>全般</td><td>空中で10回転以上する</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task26"></td><td><label for="task26">オンラインレースで1位</label></td><td>レース</td><td>オンラインのレースモードで1位になる</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task27"></td><td><label for="task27">オンラインレースで10勝</label></td><td>レース</td><td>オンラインのレースモードで10回勝利する</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task28"></td><td><label for="task28">全マップ逆走クリア</label></td><td>全般</td><td>ゴールからスタート地点まで到達する</td><td>縛りプレイ</td></tr>
+            <tr><td><input type="checkbox" id="task29"></td><td><label for="task29">最小ジャンプ回数クリア (Map 1)</label></td><td>Map 1</td><td>規定回数以下のジャンプでクリアする</td><td>計画性が重要</td></tr>
+            <tr><td><input type="checkbox" id="task30"></td><td><label for="task30">最小ジャンプ回数クリア (Map 2)</label></td><td>Map 2</td><td>規定回数以下のジャンプでクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task31"></td><td><label for="task31">Pineapple Skip</label></td><td>Map 2</td><td>パイナップルエリアをスキップする</td><td>要練習</td></tr>
+            <tr><td><input type="checkbox" id="task32"></td><td><label for="task32">Frog Skip</label></td><td>Map 2</td><td>カエルエリアをスキップする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task33"></td><td><label for="task33">Map 4 クリア</label></td><td>Map 4</td><td>4番目のマップをクリアする</td><td>DLC or Update</td></tr>
+            <tr><td><input type="checkbox" id="task34"></td><td><label for="task34">Map 5 クリア</label></td><td>Map 5</td><td>5番目のマップをクリアする</td><td>DLC or Update</td></tr>
+            <tr><td><input type="checkbox" id="task35"></td><td><label for="task35">無敵モード未使用クリア</label></td><td>全般</td><td>一度も無敵モードを使わずに全マップクリア</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task36"></td><td><label for="task36">全エモート収集</label></td><td>全般</td><td>ゲーム内の全てのエモートをアンロックする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task37"></td><td><label for="task37">The Void 到達</label></td><td>???</td><td>マップ外の隠しエリア「The Void」に到達する</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task38"></td><td><label for="task38">100人のプレイヤーと遭遇</label></td><td>全般</td><td>オンラインで100人のユニークプレイヤーとすれ違う</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task39"></td><td><label for="task39">チュートリアルスキップ</label></td><td>チュートリアル</td><td>チュートリアルエリアを意図的にスキップする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task40"></td><td><label for="task40">特定衣装でクリア</label></td><td>全般</td><td>指定された衣装を装備してMap 1をクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task41"></td><td><label for="task41">全てのイースターエッグ発見</label></td><td>全般</td><td>開発者が仕込んだ全ての隠しネタを見つける</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task42"></td><td><label for="task42">Relay Mode (1-3) 15分切り</label></td><td>Map 1-3</td><td>Map1から3までを連続で15分以内にクリア</td><td>レジェンドへの道</td></tr>
+            <tr><td><input type="checkbox" id="task43"></td><td><label for="task43">Relay Mode (1-3) 10分切り</label></td><td>Map 1-3</td><td>Map1から3までを連続で10分以内にクリア</td><td>神業</td></tr>
+            <tr><td><input type="checkbox" id="task44"></td><td><label for="task44">🎯 Steam実績コンプリート</label></td><td>全般</td><td>Steamクライアント上の実績を全て解除する</td><td>ポゴマスター条件</td></tr>
+            <tr><td><input type="checkbox" id="task45"></td><td><label for="task45">🎓 Pogo Master</label></td><td>全般</td><td>全ての前提条件を満たしマスターとなる</td><td>あと一歩</td></tr>
+            <tr><td><input type="checkbox" id="task46"></td><td><label for="task46">👑 Pogo Legend</label></td><td>???</td><td>全ての試練を乗り越え、伝説となる</td><td>最終目標</td></tr>
+            </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // テーブル内のチェックボックスを全て取得
+            const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+            const totalTasks = taskCheckboxes.length;
+
+            // 進捗を更新する関数
+            function updateProgress() {
+                // チェックされているタスクの数を数える
+                const checkedTasks = document.querySelectorAll('#taskTable input[type="checkbox"]:checked').length;
+                
+                // 進捗率を計算 (タスクが0の場合は0%にする)
+                const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+                
+                // 計算結果を画面に反映
+                progressText.textContent = `${progressPercentage}%`;
+                progressBar.style.width = `${progressPercentage}%`;
+                progressBar.textContent = `${progressPercentage}%`;
+            }
+
+            // 各チェックボックスが変更されたら、進捗を更新
+            taskCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+
+            // ページ読み込み時に初期状態を計算して表示
+            updateProgress();
+        });
+    </script>
+
+</body>
+</html>
