@@ -6,113 +6,118 @@
   <title>実績進捗管理ツール (全46項目)</title>
   <style>
     body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f8f9fa;
-            color: #333;
-            padding: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
 
-        h1, h2 {
-            text-align: center;
-            color: #2c3e50;
-        }
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
 
-        /* テーブルのスタイル */
-        .task-table {
-            width: 100%;
-            border-collapse: collapse; /* ボーダーを重ねる */
-            margin-top: 25px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden; /* 角丸を有効にするため */
-        }
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-        /* テーブルのヘッダーとデータセル */
-        .task-table th, .task-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: middle;
-            font-size: 14px; /* 文字サイズを少し調整 */
-        }
-        
-        /* テーブルヘッダーのスタイル */
-        .task-table thead th {
-            background-color: #34495e;
-            color: #ffffff;
-            font-weight: bold;
-        }
-        
-        /* 各列の幅を調整 */
-        .col-check { width: 4%; text-align: center; }
-        .col-name  { width: 26%; }
-        .col-map   { width: 12%; }
-        .col-details{ width: 38%; }
-        .col-notes { width: 20%; }
+    .task-table th, .task-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: middle;
+      font-size: 14px;
+    }
 
-        /* チェックボックスのスタイル */
-        .task-table input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
+    .task-table thead th {
+      background-color: #34495e;
+      color: #ffffff;
+      font-weight: bold;
+    }
 
-        /* 実績名のラベル */
-        .task-table label {
-            cursor: pointer;
-            display: inline-block;
-        }
+    .col-check { width: 4%; text-align: center; }
+    .col-name  { width: 26%; }
+    .col-map   { width: 12%; }
+    .col-details { width: 38%; }
+    .col-notes { width: 20%; }
 
-        /* 最後の行のボーダーを消す */
-        .task-table tbody tr:last-child td {
-            border-bottom: none;
-        }
+    .task-table input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
 
-        /* 進捗バーのコンテナ */
-        .progress-container {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: sticky; /* スクロールしても追従するように */
-            top: 10px;
-            z-index: 10;
-        }
-        .progress-bar-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        #progress-bar {
-            width: 0%;
-            height: 25px;
-            background-color: #007bff;
-            text-align: center;
-            line-height: 25px;
-            color: white;
-            font-weight: bold;
-            transition: width 0.5s ease-in-out;
-        }
-    </style>
+    .task-table label {
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .task-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .progress-container {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    #progress-bar {
+      width: 0%;
+      height: 25px;
+      background-color: #007bff;
+      text-align: center;
+      line-height: 25px;
+      color: white;
+      font-weight: bold;
+      transition: width 0.5s ease-in-out;
+    }
+  </style>
 </head>
 <body>
+
+  <h1>🏆 Pogo Legendへの道 🏆</h1>
+
+  <div class="progress-container">
+    <h2>現在の達成率: <span id="progress-text">0%</span></h2>
+    <div class="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <table class="task-table" id="taskTable">
     <thead>
-            <tr>
-                <th class="col-check">✔</th>
-                <th class="col-name">実績名</th>
-                <th class="col-map">MAP</th>
-                <th class="col-details">詳細</th>
-                <th class="col-notes">備考</th>
-            </tr>
-        </thead>
-       
+      <tr>
+        <th class="col-check">✔</th>
+        <th class="col-name">実績名</th>
+        <th class="col-map">MAP</th>
+        <th class="col-details">詳細</th>
+        <th class="col-notes">備考</th>
+      </tr>
+    </thead>   
+    <tbody>
     /* 以下は元のCSSと同じなので省略していますが、必要ならそのまま使ってください */
   </style>
 </head>
@@ -225,5 +230,6 @@
 
 </body>
 </html>
+
 
 
