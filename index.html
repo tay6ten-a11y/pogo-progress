@@ -1,1 +1,237 @@
-git reset --hard <64a6ac074867676049c6dca868065030126906b9>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>実績進捗管理ツール (全46項目)</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .task-table th, .task-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    .task-table thead th {
+      background-color: #34495e;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .col-check { width: 4%; text-align: center; }
+    .col-name  { width: 26%; }
+    .col-map   { width: 12%; }
+    .col-details { width: 38%; }
+    .col-notes { width: 20%; }
+
+    .task-table input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .task-table label {
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .task-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .progress-container {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    #progress-bar {
+      width: 0%;
+      height: 25px;
+      background-color: #007bff;
+      text-align: center;
+      line-height: 25px;
+      color: white;
+      font-weight: bold;
+      transition: width 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏆 Pogo Legendへの道 🏆</h1>
+
+  <div class="progress-container">
+    <h2>現在の達成率: <span id="progress-text">0%</span></h2>
+    <div class="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <table class="task-table" id="taskTable">
+    <thead>
+      <tr>
+        <th class="col-check">✔</th>
+        <th class="col-name">実績名</th>
+        <th class="col-map">MAP</th>
+        <th class="col-details">詳細</th>
+        <th class="col-notes">備考</th>
+      </tr>
+    </thead>   
+     <tbody>
+            <tr><td><input type="checkbox" id="task1"></td><td><label for="task1"> <img src="https://github.com/tay6ten-a11y/pogo-progress/blob/main/hebi.jpg?raw=true" alt="Easy Prey" style="width:40px; height:40px; vertical-align:middle; margin-right:8px;">Easy Prey</label></td><td>Map 1</td><td>ヘビに食べられたうえで10分以内にクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task2"></td><td><label for="task2"><img src="https://github.com/tay6ten-a11y/pogo-progress/blob/main/images/ice.jpg?raw=true" alt="Easy Prey" style="width:40px; height:40px; vertical-align:middle; margin-right:8px;">Frosty Fray</label></td><td>Map 1</td><td>マップ1のIceモードをクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task3"></td><td><label for="task3"><img src="https://github.com/tay6ten-a11y/pogo-progress/blob/main/images/skiplesss.jpg?raw=true" alt="Easy Prey" style="width:40px; height:40px; vertical-align:middle; margin-right:8px;">Skipless</label></td><td>Map 1</td><td>マップ1のSkiplessモードをクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task4"></td><td><label for="task4"><img src="https://github.com/tay6ten-a11y/pogo-progress/blob/main/images/2UD.jpg?raw=true" alt="Easy Prey" style="width:40px; height:40px; vertical-align:middle; margin-right:8px;">Upside-Down</label></td><td>Map 2</td><td>マップ2のUpside-Downモードをクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task5"></td><td><label for="task5"><img src="https://github.com/tay6ten-a11y/pogo-progress/blob/main/images/pazzle.png?raw=true" alt="Easy Prey" style="width:40px; height:40px; vertical-align:middle; margin-right:8px;">Human Rocket</label></td><td>Map 2</td><td>マップ2のPuzzleモードを3分以内にクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task6"></td><td><label for="task6">Back For More</label></td><td>Map 3</td><td>マップ3を初めてプレイする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task7"></td><td><label for="task7">Map 3 Sightseeing</label></td><td>Map 3</td><td>崩れた橋を飛び越える</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task8"></td><td><label for="task8">Map 3 Sightseeing</label></td><td>Map 3</td><td>運命の門にたどり着く</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task9"></td><td><label for="task9">Map 3 Sightseeing</label></td><td>Map 3</td><td>釣りのミニゲームはないよ</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task10"></td><td><label for="task10">Map 3 Sightseeing</label></td><td>Map 3</td><td>ベッドによさそうだ</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task11"></td><td><label for="task11">Map 3 Sightseeing</label></td><td>Map 3</td><td>海賊に会う</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task12"></td><td><label for="task12">Map 3 Sightseeing</label></td><td>Map 3</td><td>草食動物でよかった</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task13"></td><td><label for="task13">Map 3 Sightseeing</label></td><td>Map 3</td><td>戦いの火蓋が切られた</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task14"></td><td><label for="task14">Map 3 Sightseeing</label></td><td>Map 3</td><td>クチバシのついた友だち</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task15"></td><td><label for="task15">The Root Of All Evil</label></td><td>Map 3</td><td>マップ3（Regularモード）をクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task16"></td><td><label for="task16">Old Man's Tales</label></td><td>Map 3</td><td>老賢人の話を聞く</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task17"></td><td><label for="task17">Turtle Friend</label></td><td>Map 3</td><td>カメにエサをあげる</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task18"></td><td><label for="task18">Make haste!</label></td><td>Map 3</td><td>マップ3を10分以内にクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task19"></td><td><label for="task19">Shortcut Andy</label></td><td>Map 3</td><td>マップ3の道を知り尽くす</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task20"></td><td><label for="task20">Treasure Hunter</label></td><td>Map 3</td><td>マップ3のコインを50枚集める</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task21"></td><td><label for="task21">The Spirit Of Greed</label></td><td>Map 3</td><td>マップ3のコインを100枚すべて集める</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task22"></td><td><label for="task22">Gap Jump</label></td><td>Map 3</td><td>海を飛び越える</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task23"></td><td><label for="task23">A Friend In Need</label></td><td>Map 3</td><td>ポーズエフェクトで3人のプレイヤーを助ける</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task24"></td><td><label for="task24">Straight A's</label></td><td>Map 3</td><td>ルートAを選び続けてマップ3をクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task25"></td><td><label for="task25">Boost Refusenik</label></td><td>Map 3</td><td>一度もブーストジャンプせずに鳥居にたどり着く</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task26"></td><td><label for="task26">Map 3 Marathon</label></td><td>Map 3</td><td>マップ3を10回クリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task27"></td><td><label for="task27">Pro Gamer</label></td><td>Map 3</td><td>Proスティックを手に入れる</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task28"></td><td><label for="task28">Tick-Tock</label></td><td>Map 3</td><td>時計回りのみでナシを突破する</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task29"></td><td><label for="task29">Human Rocket</label></td><td>Map 3</td><td>マップ3のPuzzleモードを3分以内にクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task30"></td><td><label for="task30">Double Jump Speedrun</label></td><td>Map 3</td><td>マップ3のDouble Jumpモードを5分以内にクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task31"></td><td><label for="task31">Purist</label></td><td>Map 3</td><td>水とリングを通らずにマップ3をクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task32"></td><td><label for="task32">Drakula's Castle</label></td><td>B</td><td>ボーナスマップDrakula's Castleをクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task33"></td><td><label for="task33">Drakula's Veranda</label></td><td>B</td><td>Drakula's Castleで5つのカボチャをすべて破壊する。</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task34"></td><td><label for="task34">Drakula's Speedway</label></td><td>B</td><td>ボーナスマップDrakula's Castleを3分以内にクリアする</td><td></td></tr>
+            <tr><td><input type="checkbox" id="task35"></td><td><label for="task35">Bully!</label></td><td></td><td>いずれかのモードで開発者を抜かす</td><td>Map3(Puzzleモード)が最も狙い目</td></tr>
+            <tr><td><input type="checkbox" id="task36"></td><td><label for="task36">全エモート収集</label></td><td>全般</td><td>ゲーム内の全てのエモートをアンロックする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task37"></td><td><label for="task37">The Void 到達</label></td><td>???</td><td>マップ外の隠しエリア「The Void」に到達する</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task38"></td><td><label for="task38">100人のプレイヤーと遭遇</label></td><td>全般</td><td>オンラインで100人のユニークプレイヤーとすれ違う</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task39"></td><td><label for="task39">チュートリアルスキップ</label></td><td>チュートリアル</td><td>チュートリアルエリアを意図的にスキップする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task40"></td><td><label for="task40">特定衣装でクリア</label></td><td>全般</td><td>指定された衣装を装備してMap 1をクリアする</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task41"></td><td><label for="task41">全てのイースターエッグ発見</label></td><td>全般</td><td>開発者が仕込んだ全ての隠しネタを見つける</td><td>-</td></tr>
+            <tr><td><input type="checkbox" id="task42"></td><td><label for="task42">Relay Mode (1-3) 15分切り</label></td><td>Map 1-3</td><td>Map1から3までを連続で15分以内にクリア</td><td>レジェンドへの道</td></tr>
+            <tr><td><input type="checkbox" id="task43"></td><td><label for="task43">Relay Mode (1-3) 10分切り</label></td><td>Map 1-3</td><td>Map1から3までを連続で10分以内にクリア</td><td>神業</td></tr>
+            <tr><td><input type="checkbox" id="task44"></td><td><label for="task44">🎯 Steam実績コンプリート</label></td><td>全般</td><td>Steamクライアント上の実績を全て解除する</td><td>ポゴマスター条件</td></tr>
+            <tr><td><input type="checkbox" id="task45"></td><td><label for="task45">🎓 Pogo Master</label></td><td>全般</td><td>全ての前提条件を満たしマスターとなる</td><td>あと一歩</td></tr>
+            <tr><td><input type="checkbox" id="task46"></td><td><label for="task46">👑 Pogo Legend</label></td><td>???</td><td>全ての試練を乗り越え、伝説となる</td><td>最終目標</td></tr>
+            </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
+      const progressText = document.getElementById('progress-text');
+      const progressBar = document.getElementById('progress-bar');
+      const totalTasks = taskCheckboxes.length;
+
+      // 進捗を更新する関数
+      function updateProgress() {
+        const checkedTasks = document.querySelectorAll('#taskTable input[type="checkbox"]:checked').length;
+        const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+        progressText.textContent = `${progressPercentage}%`;
+        progressBar.style.width = `${progressPercentage}%`;
+        progressBar.textContent = `${progressPercentage}%`;
+      }
+
+      // チェック状態を保存する関数
+      function saveState(checkbox) {
+        localStorage.setItem(checkbox.id, checkbox.checked);
+      }
+
+      // チェック状態を復元する関数
+      function loadState() {
+        taskCheckboxes.forEach(checkbox => {
+          const saved = localStorage.getItem(checkbox.id);
+          if (saved === 'true') {
+            checkbox.checked = true;
+          }
+        });
+      }
+
+      // 初期化処理
+      loadState();       // 保存された状態を復元
+      updateProgress();  // 初期進捗を表示
+
+      // チェック変更時に保存＆更新
+      taskCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          saveState(checkbox);
+          updateProgress();
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
