@@ -112,6 +112,22 @@
   width: 800px; /* 必要に応じて調整可能 */
   white-space: nowrap; /* 折り返し防止（必要なら） */
 }
+    .page-footer {
+  text-align: right;
+  font-size: 13px;
+  color: #555;
+  padding: 10px 20px;
+  margin-top: 50px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc;
+}
+.page-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+.page-footer a:hover {
+  text-decoration: underline;
+}
   </style>
 </head>
 <body>
@@ -192,7 +208,11 @@
             <tr><td><input type="checkbox" id="task45"></td><td><label for="task45">Take Pogo Legend Exam</label></td><td></td><td class="wide-cell">上記すべての条件を満たし、Map1～3を15分以内に登頂する</td><td></td></tr>
             </tbody>
   </table>
-
+  <footer class="page-footer">
+  引用元: <a href="https://example.com" target="_blank">Exampleサイト</a><br>
+  作成者: <a href="https://yourprofile.com" target="_blank">ai</a>
+  </footer>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
@@ -239,6 +259,7 @@
 
 </body>
 </html>
+
 
 
 
