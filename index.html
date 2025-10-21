@@ -128,6 +128,25 @@
 .page-footer a:hover {
   text-decoration: underline;
 }
+.reset-container {
+      text-align: center;
+      margin: 40px 0 20px 0; /* テーブルとフッターの間に余白を確保 */
+    }
+    #reset-button {
+      padding: 10px 25px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #c0392b; /* 少し暗めの赤 */
+      background-color: #ffffff; /* 背景は白 */
+      border: 2px solid #c0392b; /* 枠線を赤に */
+      border-radius: 25px; /* 角を丸く（ピル型に） */
+      cursor: pointer;
+      transition: all 0.3s ease; /* ホバー時のアニメーション */
+    }
+    #reset-button:hover {
+      background-color: #c0392b; /* ホバーで背景を赤に */
+      color: #ffffff; /* ホバーで文字を白に */
+    }
   </style>
 </head>
 <body>
@@ -208,17 +227,22 @@
             <tr><td><input type="checkbox" id="task45"></td><td><label for="task45">Take Pogo Legend Exam</label></td><td></td><td class="wide-cell">上記すべての条件を満たし、Map1～3を15分以内に登頂する</td><td></td></tr>
             </tbody>
   </table>
+  <div class="reset-container">
+    <button id="reset-button">進捗をリセット</button>
+  </div>
   <footer class="page-footer">
   引用元: <a href="https://www.twitch.tv/neiro_jp_furry" target="_blank">ねいろは激しく怒るシカ🦌様作</a>/<a href="https://docs.google.com/spreadsheets/d/1AAHcIw14JSdJ76ggoacMfHeuo93zcXbUV8A6ixRixo8/edit?gid=479722961#gid=479722961" target="_blank">PogoStuck実績チェックシート</a><br>
   作成者: <a href="https://x.com/karenchandayo__" target="_blank">karen</a>
   </footer>
   
   <script>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
       const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
       const progressText = document.getElementById('progress-text');
       const progressBar = document.getElementById('progress-bar');
       const totalTasks = taskCheckboxes.length;
+      const resetButton = document.getElementById('reset-button'); // リセットボタンを取得
 
       // 進捗を更新する関数
       function updateProgress() {
@@ -243,6 +267,18 @@
         });
       }
 
+      // 進捗をリセットする関数
+      function resetProgress() {
+        // 誤操作防止のために確認ダイアログを表示
+        if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
+          taskCheckboxes.forEach(checkbox => {
+            checkbox.checked = false; // 1. チェックボックスのチェックを外す
+            localStorage.removeItem(checkbox.id); // 2. localStorageから保存データを削除
+          });
+          updateProgress(); // 3. プログレスバーを0%に更新
+        }
+      }
+
       // 初期化処理
       loadState();       // 保存された状態を復元
       updateProgress();  // 初期進捗を表示
@@ -254,11 +290,15 @@
           updateProgress();
         });
       });
+
+      // リセットボタンにクリックイベントを設定
+      resetButton.addEventListener('click', resetProgress);
     });
   </script>
 
 </body>
 </html>
+
 
 
 
