@@ -206,7 +206,6 @@
         const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
         progressText.textContent = `${progressPercentage}%`;
         progressBar.style.width = `${progressPercentage}%`;
-        progressBar.textContent = `${progressPercentage}%`;
       }
 
       // チェック状態を保存する関数
@@ -240,6 +239,7 @@
 
 </body>
 </html>
+
 
 
 
