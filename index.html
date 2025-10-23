@@ -351,7 +351,16 @@ document.addEventListener('DOMContentLoaded', () => {
       function loadState() {
         let checkedCount = 0;
         taskCheckboxes.forEach(checkbox => {
-          const saved = localStorage.getItem(checkbox.id);
+          checkbox.addEventListener('change', () => {
+            // saveState(checkbox);  <-- ここで即座に保存するのをやめる
+
+          // データをローカルストレージに書き込むための安定化（50msの遅延）
+          setTimeout(() => {
+              saveState(checkbox); 
+              updateProgress();
+          }, 50); // 50ミリ秒遅延させて書き込みを安定させる
+          
+          // updateProgress(); <-- ここで即座に進捗更新するのをやめる
           
             // Local Storageにデータが存在する場合にのみ、状態を上書きする
           if (saved === 'true') {
@@ -432,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
