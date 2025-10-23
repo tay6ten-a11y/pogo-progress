@@ -286,6 +286,50 @@
     </div>
 </div>
  <script>
+   // 紙吹雪用の設定
+const CONFETTI_IMAGE_URL = 'https://github.com/tay6ten-a11y/pogo-progress/blob/main/images/nomal.jpg?raw=true'; // 任意の画像URL (例としてnomal.jpgを使用)
+let confettiInterval;
+
+// 紙吹雪をスタートさせる関数
+function startConfetti() {
+    if (confettiInterval) return; // 既に実行中の場合は何もしない
+
+    const duration = 15 * 1000; // 15秒間紙吹雪を出す
+    const end = Date.now() + duration;
+
+    // 紙吹雪ライブラリ（canvas-confetti）を使用
+    // 任意の画像を使用するため、`shapes` に 'image' を指定し、`shapeOptions` で画像を設定します。
+    (function frame() {
+        confetti({
+            particleCount: 5,
+            spread: 90,
+            origin: { y: 0.6 },
+            shapes: ['circle', 'square', 'star', 'image'],
+            shapeOptions: {
+                image: {
+                    src: CONFETTI_IMAGE_URL,
+                    width: 40,
+                    height: 40
+                }
+            },
+            disableForReducedMotion: true
+        });
+
+        if (Date.now() < end) {
+            confettiInterval = requestAnimationFrame(frame);
+        } else {
+            stopConfetti();
+        }
+    }());
+}
+
+// 紙吹雪をストップさせる関数
+function stopConfetti() {
+    if (confettiInterval) {
+        cancelAnimationFrame(confettiInterval);
+        confettiInterval = null;
+    }
+}
     document.addEventListener('DOMContentLoaded', () => {
       const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
       const progressText = document.getElementById('progress-text');
@@ -299,7 +343,13 @@
         const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
         progressText.textContent = `${progressPercentage}%`;
         progressBar.style.width = `${progressPercentage}%`;
-      }
+     // ★ 100%達成時の処理を追加
+    if (progressPercentage === 100) {
+        startConfetti();
+    } else {
+        stopConfetti(); // 100%未満に戻った場合に停止
+    }
+      }
 
       // チェック状態を保存する関数
       function saveState(checkbox) {
@@ -396,6 +446,7 @@
 
 </body>
 </html>
+
 
 
 
