@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // ローカルストレージキーの定義
       const PROMPT_FLAG_KEY = 'pogoMasterPrompted';
 
-      // 進捗を更新する関数 (変更なし)
+      // 進捗を更新する関数
       function updateProgress() {
         const checkedTasks = document.querySelectorAll('#taskTable input[type="checkbox"]:checked').length;
         const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
@@ -347,30 +347,17 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(checkbox.id, checkbox.checked);
       }
 
-      // チェック状態を復元する関数 (★修正★)
+      // チェック状態を復元する関数 (★loadStateを修正★)
       function loadState() {
         let checkedCount = 0;
         taskCheckboxes.forEach(checkbox => {
-          checkbox.addEventListener('change', () => {
-            // saveState(checkbox);  <-- ここで即座に保存するのをやめる
-
-          // データをローカルストレージに書き込むための安定化（50msの遅延）
-          setTimeout(() => {
-              saveState(checkbox); 
-              updateProgress();
-          }, 50); // 50ミリ秒遅延させて書き込みを安定させる
-          
-          // updateProgress(); <-- ここで即座に進捗更新するのをやめる
-          
-            // Local Storageにデータが存在する場合にのみ、状態を上書きする
+          const saved = localStorage.getItem(checkbox.id);
           if (saved === 'true') {
             checkbox.checked = true;
             checkedCount++;
           } else if (saved === 'false') {
             checkbox.checked = false;
           }
-            // savedがnull（未保存）の場合は、HTMLの初期状態（未チェック）を維持する
-
         });
         return checkedCount;
       }
@@ -378,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // モーダルを閉じる共通関数 (変更なし)
       function closeModal() {
         modalOverlay.style.display = 'none';
-        // モーダルを閉じたら、専用フラグを記録し、次回から表示しないようにする
         localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
         updateProgress(); 
       }
@@ -388,19 +374,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
           taskCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
-            localStorage.removeItem(checkbox.id); 
+            localStorage.removeItem(checkbox.id); 
           });
-          // モーダルのフラグも削除し、次回進捗0%で再表示可能にする
           localStorage.removeItem(PROMPT_FLAG_KEY);
           updateProgress();
         }
       }
       
       // ▼▼▼ 初期化処理とモーダル表示ロジック ▼▼▼
-      const checkedTasksOnLoad = loadState(); // 進捗を復元し、チェック数を取得
+      const checkedTasksOnLoad = loadState(); 
       const hasPrompted = localStorage.getItem(PROMPT_FLAG_KEY);
       
-      // 【表示条件】: 進捗が0%（checkedTasksOnLoad === 0）かつ プロンプト表示フラグがない場合のみ
+      // 【表示条件】: 進捗が0%かつ プロンプト表示フラグがない場合のみ
       if (checkedTasksOnLoad === 0 && !hasPrompted) {
         modalOverlay.style.display = 'flex';
       } else {
@@ -412,25 +397,28 @@ document.addEventListener('DOMContentLoaded', () => {
       btnYes.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = true;
-          saveState(pogoMasterCheckbox); 
+          saveState(pogoMasterCheckbox); 
         }
-        closeModal(); // フラグを記録してモーダルを閉じる
+        closeModal(); 
       });
 
       // 「いいえ」ボタンの処理 (task46は未チェックのまま)
       btnNo.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = false; 
-          saveState(pogoMasterCheckbox); // falseを保存
+          saveState(pogoMasterCheckbox); 
         }
-        closeModal(); // フラグを記録してモーダルを閉じる
+        closeModal(); 
       });
       
-      // チェック変更時に保存＆更新
+      // チェック変更時に保存＆更新 (★遅延処理をここに戻す★)
       taskCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-          saveState(checkbox);
-          updateProgress();
+             // データの書き込みを安定させるための遅延処理
+             setTimeout(() => {
+                 saveState(checkbox);
+                 updateProgress();
+             }, 50); // 50ms遅延
         });
       });
 
@@ -441,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
