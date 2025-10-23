@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const resetButton = document.getElementById('reset-button');
       const pogoMasterCheckbox = document.getElementById('task46'); // task46を直接取得
 
-      // ローカルストレージキーの定義
+      // ローカルストレージキーの定義 (これがモーダルの表示を制御する唯一のフラグです)
       const PROMPT_FLAG_KEY = 'pogoMasterPrompted';
 
       // 進捗を更新する関数
@@ -356,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
             checkbox.checked = true;
             checkedCount++;
           } else if (saved === 'false') {
+                 // "false"の保存は維持 (手動でチェックを外した時の状態を保持するため)
             checkbox.checked = false;
           }
         });
@@ -365,8 +366,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // モーダルを閉じる共通関数
       function closeModal() {
         modalOverlay.style.display = 'none';
-        // モーダルを閉じたら、専用フラグを記録
-        localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
+        // モーダルを閉じたら、専用フラグを記録し、次回から表示しないようにする
+        localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
         updateProgress(); 
       }
 
@@ -375,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
           taskCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
-            localStorage.removeItem(checkbox.id); // すべて削除
+            localStorage.removeItem(checkbox.id); // タスクデータを削除
           });
           // モーダルのフラグも削除し、次回進捗0%で再表示可能にする
           localStorage.removeItem(PROMPT_FLAG_KEY);
@@ -383,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
-      // ▼▼▼ 初期化処理とモーダル表示ロジック (最終修正) ▼▼▼
+      // ▼▼▼ 初期化処理とモーダル表示ロジック ▼▼▼
       const checkedTasksOnLoad = loadState();
       const hasPrompted = localStorage.getItem(PROMPT_FLAG_KEY);
       
@@ -407,7 +408,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // 「いいえ」ボタンの処理 (task46は未チェックのまま)
       btnNo.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
-          pogoMasterCheckbox.checked = false; 
+          pogoMasterCheckbox.checked = false; 
+            // task46が未チェックの状態を明示的に保存する必要はありません。
+            // 理由は、PROMPT_FLAG_KEYによって表示が制御されるためです。
+            // しかし、ユーザーがtask46を手動でチェック・解除できるように、
+            // loadState()の機能維持のため、この行は残します。
           saveState(pogoMasterCheckbox); // falseを保存
         }
         closeModal(); // フラグを記録してモーダルを閉じる
@@ -428,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
