@@ -348,10 +348,14 @@
       function loadState() {
         let checkedCount = 0;
         taskCheckboxes.forEach(checkbox => {
+          // localStorage.getItem(id)は文字列の"true"か"false"を返すか、nullを返す
           const saved = localStorage.getItem(checkbox.id);
           if (saved === 'true') {
             checkbox.checked = true;
             checkedCount++;
+          } else if (saved === 'false') {
+                 // 明示的に'false'が保存されている場合も未チェック状態を復元
+            checkbox.checked = false;
           }
         });
         return checkedCount;
@@ -360,8 +364,7 @@
       // モーダルを閉じる共通関数
       function closeModal() {
         modalOverlay.style.display = 'none';
-        // pogoVisitedの代わりにtask46のチェック状態が存続フラグになる
-        updateProgress(); 
+        updateProgress(); 
       }
 
       // 進捗をリセットする関数
@@ -369,36 +372,41 @@
         if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
           taskCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
-            localStorage.removeItem(checkbox.id);
+            localStorage.removeItem(checkbox.id); // すべて削除して初期状態に戻す
           });
-          // pogoVisitedの削除は不要になった
           updateProgress();
         }
       }
       
-      // ▼▼▼ 初期化処理とモーダル表示ロジックをtask46に依存するように修正 ▼▼▼
+      // ▼▼▼ 初期化処理とモーダル表示ロジックの調整 ▼▼▼
       const checkedTasksOnLoad = loadState();
-      // 進捗が0%かつ「ポゴマスターである」が未チェックの場合のみモーダルを表示する
+      
+      // 「ポゴマスターである」(task46)が未チェックかつ、チェックされているタスクが0個の場合のみモーダルを表示する
+      // loadStateが実行された後、pogoMasterCheckbox.checkedはストレージの状態を反映している
+      // task46が未チェック AND 他のタスクも未チェック（合計0）なら表示
       if (checkedTasksOnLoad === 0 && !pogoMasterCheckbox.checked) {
         modalOverlay.style.display = 'flex';
       } else {
         updateProgress();
       }
-      // ▲▲▲ 修正箇所 ▲▲▲
+      // ▲▲▲ 初期化ロジックはこれでOK ▲▲▲
 
       // 「はい」ボタンの処理 (task46をチェック)
       btnYes.addEventListener('click', () => {
-        // task46は既に取得済み
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = true;
-          saveState(pogoMasterCheckbox);
+          saveState(pogoMasterCheckbox); // trueを保存 -> checkedTasksOnLoadが1以上になる
         }
         closeModal();
       });
 
-      // 「いいえ」ボタンの処理
+      // 「いいえ」ボタンの処理 (修正: task46の未チェック状態を明示的に保存)
       btnNo.addEventListener('click', () => {
-        // task46をチェックしないが、モーダルは閉じる
+        if (pogoMasterCheckbox) {
+          pogoMasterCheckbox.checked = false; // 未チェック状態を保証
+          // falseという文字列を保存することで、次回ロード時に task46 のデータが存在することを示す
+          localStorage.setItem(pogoMasterCheckbox.id, 'false'); 
+        }
         closeModal();
       });
       
@@ -417,6 +425,7 @@
 
 </body>
 </html>
+
 
 
 
