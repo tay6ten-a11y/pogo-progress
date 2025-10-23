@@ -309,7 +309,7 @@
   </footer>
   
   <script>
-   document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
       const modalOverlay = document.getElementById('first-visit-modal');
       const btnYes = document.getElementById('pogo-master-yes');
       const btnNo = document.getElementById('pogo-master-no');
@@ -318,6 +318,7 @@
       const progressBar = document.getElementById('progress-bar');
       const totalTasks = taskCheckboxes.length;
       const resetButton = document.getElementById('reset-button');
+      const pogoMasterCheckbox = document.getElementById('task46'); // task46を直接取得
 
       // 進捗を更新する関数
       function updateProgress() {
@@ -325,13 +326,12 @@
         const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
         progressText.textContent = `${progressPercentage}%`;
         progressBar.style.width = `${progressPercentage}%`;
-        
+        
         if (progressPercentage === 100) {
           confetti({
             particleCount: 150,
             spread: 80,
             origin: { y: 0.6 },
-            // GitHubのRaw URLを使用（画像が表示されない場合はホスティング先を変更してください）
             shapes: ['square', 'circle', 'https://github.com/tay6ten-a11y/pogo-progress/raw/main/images/nomal_touka.png'], 
             scalar: 0.9
           });
@@ -360,9 +360,8 @@
       // モーダルを閉じる共通関数
       function closeModal() {
         modalOverlay.style.display = 'none';
-        // モーダルを閉じたら、訪問フラグを記録
-        localStorage.setItem('pogoVisited', 'true');
-        updateProgress(); // プログレスバーを更新
+        // pogoVisitedの代わりにtask46のチェック状態が存続フラグになる
+        updateProgress(); 
       }
 
       // 進捗をリセットする関数
@@ -372,28 +371,24 @@
             checkbox.checked = false;
             localStorage.removeItem(checkbox.id);
           });
-          // 進捗が0%になるため、訪問フラグも削除し、次回モーダルを表示可能にする
-          localStorage.removeItem('pogoVisited');
+          // pogoVisitedの削除は不要になった
           updateProgress();
         }
       }
-      
-      // ▼▼▼ 初期化処理とモーダル表示ロジック ▼▼▼
+      
+      // ▼▼▼ 初期化処理とモーダル表示ロジックをtask46に依存するように修正 ▼▼▼
       const checkedTasksOnLoad = loadState();
-      const hasVisited = localStorage.getItem('pogoVisited');
-      const progressOnLoad = totalTasks > 0 ? Math.round((checkedTasksOnLoad / totalTasks) * 100) : 0;
-
-      // 訪問フラグがなく、かつ、進捗が0%の場合のみモーダルを表示
-      if (!hasVisited && progressOnLoad === 0) {
+      // 進捗が0%かつ「ポゴマスターである」が未チェックの場合のみモーダルを表示する
+      if (checkedTasksOnLoad === 0 && !pogoMasterCheckbox.checked) {
         modalOverlay.style.display = 'flex';
       } else {
-        // 既に訪問済みか、または進捗がある場合は、すぐに進捗バーを更新
         updateProgress();
       }
+      // ▲▲▲ 修正箇所 ▲▲▲
 
       // 「はい」ボタンの処理 (task46をチェック)
       btnYes.addEventListener('click', () => {
-        const pogoMasterCheckbox = document.getElementById('task46');
+        // task46は既に取得済み
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = true;
           saveState(pogoMasterCheckbox);
@@ -403,9 +398,10 @@
 
       // 「いいえ」ボタンの処理
       btnNo.addEventListener('click', () => {
+        // task46をチェックしないが、モーダルは閉じる
         closeModal();
       });
-      
+      
       // チェック変更時に保存＆更新
       taskCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
@@ -421,6 +417,7 @@
 
 </body>
 </html>
+
 
 
 
