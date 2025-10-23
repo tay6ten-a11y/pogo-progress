@@ -148,6 +148,7 @@
       color: #ffffff; /* ホバーで文字を白に */
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
@@ -250,6 +251,17 @@
         const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
         progressText.textContent = `${progressPercentage}%`;
         progressBar.style.width = `${progressPercentage}%`;
+        // ★ここから追加★
+        // もし進捗が100%になったら
+        if (progressPercentage === 100) {
+          // 紙吹雪を実行
+          confetti({
+            particleCount: 150, // 紙吹雪の量
+            spread: 80,       // 散らばる角度
+            origin: { y: 0.6 } // 発射位置（画面の上から60%の位置）
+          });
+        }
+        // ★ここまで追加★
       }
 
       // チェック状態を保存する関数
@@ -298,6 +310,7 @@
 
 </body>
 </html>
+
 
 
 
