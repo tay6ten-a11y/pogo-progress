@@ -310,76 +310,88 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // ▼▼▼ ステップ3-1: モーダル関連の要素を取得 ▼▼▼
-      const modalOverlay = document.getElementById('first-visit-modal');
-      const btnYes = document.getElementById('pogo-master-yes');
-      const btnNo = document.getElementById('pogo-master-no');
-      // ▲▲▲ ここまで ▲▲▲
-      const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
-      const progressText = document.getElementById('progress-text');
-      const progressBar = document.getElementById('progress-bar');
-      const totalTasks = taskCheckboxes.length;
-      const resetButton = document.getElementById('reset-button'); // リセットボタンを取得
+      // ▼▼▼ ステップ3-1: モーダル関連の要素を取得 ▼▼▼
+      const modalOverlay = document.getElementById('first-visit-modal');
+      const btnYes = document.getElementById('pogo-master-yes');
+      const btnNo = document.getElementById('pogo-master-no');
+      // ▲▲▲ ここまで ▲▲▲
+      const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
+      const progressText = document.getElementById('progress-text');
+      const progressBar = document.getElementById('progress-bar');
+      const totalTasks = taskCheckboxes.length;
+      const resetButton = document.getElementById('reset-button'); // リセットボタンを取得
 
-      // 進捗を更新する関数
-      function updateProgress() {
-        const checkedTasks = document.querySelectorAll('#taskTable input[type="checkbox"]:checked').length;
-        const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
-        progressText.textContent = `${progressPercentage}%`;
-        progressBar.style.width = `${progressPercentage}%`;
-        // ★ここから追加★
+      // 進捗を更新する関数
+      function updateProgress() {
+        const checkedTasks = document.querySelectorAll('#taskTable input[type="checkbox"]:checked').length;
+        const progressPercentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+        progressText.textContent = `${progressPercentage}%`;
+        progressBar.style.width = `${progressPercentage}%`;
+        
         // もし進捗が100%になったら
         if (progressPercentage === 100) {
           // 紙吹雪を実行
           confetti({
             particleCount: 150, // 紙吹雪の量
-            spread: 80,       // 散らばる角度
+            spread: 80,       // 散らばる角度
             origin: { y: 0.6 }, // 発射位置（画面の上から60%の位置）
-            shapes: ['square', 'circle', 'https://github.com/tay6ten-a11y/pogo-progress/raw/main/images/nomal_touka.png'], // 飛ばしたい画像URL
-            scalar: 0.9 // 画像のサイズ調整 (1が標準サイズ、0.5で半分の大きさ)
+            // ★URLの修正は既に適用済みです★
+            shapes: ['square', 'circle', 'https://github.com/tay6ten-a11y/pogo-progress/raw/main/images/nomal_touka.png'], 
+            scalar: 0.9 // 画像のサイズ調整 (1が標準サイズ、0.5で半分の大きさ)
           });
         }
-        // ★ここまで追加★
-      }
+      }
 
-      // チェック状態を保存する関数
-      function saveState(checkbox) {
-        localStorage.setItem(checkbox.id, checkbox.checked);
-      }
+      // チェック状態を保存する関数
+      function saveState(checkbox) {
+        localStorage.setItem(checkbox.id, checkbox.checked);
+      }
 
-      // チェック状態を復元する関数
-      function loadState() {
-        taskCheckboxes.forEach(checkbox => {
-          const saved = localStorage.getItem(checkbox.id);
-          if (saved === 'true') {
-            checkbox.checked = true;
-          }
-        });
-      }
+      // チェック状態を復元する関数
+      function loadState() {
+        let checkedCount = 0;
+        taskCheckboxes.forEach(checkbox => {
+          const saved = localStorage.getItem(checkbox.id);
+          if (saved === 'true') {
+            checkbox.checked = true;
+            checkedCount++;
+          }
+        });
+        return checkedCount;
+      }
 
-      // 進捗をリセットする関数
-      function resetProgress() {
-        // 誤操作防止のために確認ダイアログを表示
-        if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
-          taskCheckboxes.forEach(checkbox => {
-            checkbox.checked = false; // 1. チェックボックスのチェックを外す
-            localStorage.removeItem(checkbox.id); // 2. localStorageから保存データを削除
-          });
-          updateProgress(); // 3. プログレスバーを0%に更新
-        }
-      }
-// ▼▼▼ ステップ3-2: 初回訪問チェックとモーダルの処理を追加 ▼▼▼
+      // 進捗をリセットする関数
+      function resetProgress() {
+        // 誤操作防止のために確認ダイアログを表示
+        if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
+          taskCheckboxes.forEach(checkbox => {
+            checkbox.checked = false; // 1. チェックボックスのチェックを外す
+            localStorage.removeItem(checkbox.id); // 2. localStorageから保存データを削除
+          });
+            // 3. 訪問フラグもリセットし、次回アクセス時にモーダルを再表示可能にする
+            localStorage.removeItem('pogoVisited'); 
+          updateProgress(); // 4. プログレスバーを0%に更新
+        }
+      }
+      
+// ▼▼▼ 初期化処理の修正 ▼▼▼
+      const checkedTasksOnLoad = loadState();       // 保存された状態を復元し、チェック数を取得
       const hasVisited = localStorage.getItem('pogoVisited');
 
-      if (!hasVisited) {
-        // 未訪問の場合、モーダルを表示（display: flex; はCSSで設定済み）
+      // 'pogoVisited' フラグがなく、かつ、チェックされたタスクが0個の場合のみモーダルを表示
+      if (!hasVisited && checkedTasksOnLoad === 0) {
         modalOverlay.style.display = 'flex';
-      }
+      } else {
+          // 既に訪問済みか、または進捗がある場合は、すぐに進捗バーを更新
+          updateProgress();
+      }
+// ▲▲▲ ここまで修正 ▲▲▲
+
 
       // 「はい」ボタンの処理
       btnYes.addEventListener('click', () => {
-        // (前提で修正した ID:task46 を指定)
-        const pogoMasterCheckbox = document.getElementById('task46'); 
+        // (前提で修正した ID:task46 を指定)
+        const pogoMasterCheckbox = document.getElementById('task46'); 
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = true;
           saveState(pogoMasterCheckbox); // 状態を保存
@@ -398,26 +410,23 @@
         localStorage.setItem('pogoVisited', 'true'); // 訪問済みにする
         updateProgress(); // プログレスバーを更新
       }
-      // ▲▲▲ ここまで ▲▲▲
-      // 初期化処理
-      loadState();       // 保存された状態を復元
-      updateProgress();  // 初期進捗を表示
+      
+      // チェック変更時に保存＆更新
+      taskCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          saveState(checkbox);
+          updateProgress();
+        });
+      });
 
-      // チェック変更時に保存＆更新
-      taskCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-          saveState(checkbox);
-          updateProgress();
-        });
-      });
-
-      // リセットボタンにクリックイベントを設定
-      resetButton.addEventListener('click', resetProgress);
-    });
+      // リセットボタンにクリックイベントを設定
+      resetButton.addEventListener('click', resetProgress);
+    });
   </script>
 
 </body>
 </html>
+
 
 
 
