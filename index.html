@@ -362,16 +362,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return checkedCount;
       }
 
-      // モーダルを閉じる共通関数 (★修正: フラグ保存を確実にするための遅延とリロードを追加★)
+      // モーダルを閉じる共通関数 (★モーダル操作後の遅延リロードを追加★)
       function closeModal() {
         modalOverlay.style.display = 'none';
-        
-        // 1. まずフラグを記録
         localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
-        
-        // 2. Local Storageの書き込みを確実にするため、少し待ってからリロード
-        // ユーザーが手動でリロードボタンを押すのを防ぐために、自動で進捗を更新し、即座に終了
         updateProgress(); 
+        
+        // フラグ書き込みを保証するため、0.5秒後にページを強制リロードする
+        // これで、ユーザーが手動でリロードしなくても、状態が確定する
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 500); 
       }
 
       // 進捗をリセットする関数
@@ -382,7 +383,10 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem(checkbox.id); 
           });
           localStorage.removeItem(PROMPT_FLAG_KEY);
-          updateProgress();
+          // リセット時もリロードすることで、状態を確実にクリアする
+          setTimeout(() => {
+              window.location.reload();
+          }, 50); // わずかな遅延
         }
       }
       
@@ -404,7 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
           pogoMasterCheckbox.checked = true;
           saveState(pogoMasterCheckbox); 
         }
-        closeModal(); 
+        closeModal(); // closeModal内でフラグが記録される
+        // ここでは強制リロードせず、Local Storageの挙動に任せる
       });
 
       // 「いいえ」ボタンの処理 (task46は未チェックのまま)
@@ -413,17 +418,19 @@ document.addEventListener('DOMContentLoaded', () => {
           pogoMasterCheckbox.checked = false; 
           saveState(pogoMasterCheckbox); 
         }
-        closeModal(); 
+        closeModal(); // closeModal内でフラグが記録される
       });
       
-      // チェック変更時に保存＆更新 (★遅延処理をここに残す★)
+      // チェック変更時に保存＆更新 (★即座に保存・リロードする処理に変更★)
       taskCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-             // データの書き込みを安定させるための遅延処理
-             setTimeout(() => {
-                 saveState(checkbox);
-                 updateProgress();
-             }, 50); // 50ms遅延
+          saveState(checkbox); // すぐに保存
+          updateProgress(); // 進捗を更新
+             
+            // チェックを入れたら、Local Storageの書き込みを保証するため強制リロード
+          setTimeout(() => {
+              window.location.reload(); 
+          }, 50); // 50ms遅延
         });
       });
 
@@ -434,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
