@@ -147,11 +147,82 @@
       background-color: #c0392b; /* ホバーで背景を赤に */
       color: #ffffff; /* ホバーで文字を白に */
     }
+ /* ▼▼▼ ステップ2: このCSSを追加 ▼▼▼ */
+.modal-overlay {
+  display: none; /* JSで表示するまで非表示 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* 背景オーバーレイ */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #34495e;
+}
+
+.modal-content p {
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.modal-buttons button {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 10px;
+}
+
+#pogo-master-yes {
+  background-color: #007bff;
+  color: white;
+}
+#pogo-master-yes:hover {
+  background-color: #0056b3;
+}
+
+#pogo-master-no {
+  background-color: #e0e0e0;
+  color: #333;
+}
+#pogo-master-no:hover {
+  background-color: #c0c0c0;
+}
+/* ▲▲▲ ここまで ▲▲▲ */
   </style>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-
+<div id="first-visit-modal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>ようこそ！</h2>
+    <p>あなたは「ポゴマスター」ですか？</p>
+    <div class="modal-buttons">
+      <button id="pogo-master-yes">はい (Yes)</button>
+      <button id="pogo-master-no">いいえ (No)</button>
+    </div>
+  </div>
+</div>
   <h1>🏆 Pogo Legendへの道 🏆</h1>
 
   <div class="progress-container">
@@ -239,6 +310,11 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // ▼▼▼ ステップ3-1: モーダル関連の要素を取得 ▼▼▼
+      const modalOverlay = document.getElementById('first-visit-modal');
+      const btnYes = document.getElementById('pogo-master-yes');
+      const btnNo = document.getElementById('pogo-master-no');
+      // ▲▲▲ ここまで ▲▲▲
       const taskCheckboxes = document.querySelectorAll('#taskTable input[type="checkbox"]');
       const progressText = document.getElementById('progress-text');
       const progressBar = document.getElementById('progress-bar');
@@ -290,7 +366,37 @@
           updateProgress(); // 3. プログレスバーを0%に更新
         }
       }
+// ▼▼▼ ステップ3-2: 初回訪問チェックとモーダルの処理を追加 ▼▼▼
+      const hasVisited = localStorage.getItem('pogoVisited');
 
+      if (!hasVisited) {
+        // 未訪問の場合、モーダルを表示（display: flex; はCSSで設定済み）
+        modalOverlay.style.display = 'flex';
+      }
+
+      // 「はい」ボタンの処理
+      btnYes.addEventListener('click', () => {
+        // (前提で修正した ID:task46 を指定)
+        const pogoMasterCheckbox = document.getElementById('task46'); 
+        if (pogoMasterCheckbox) {
+          pogoMasterCheckbox.checked = true;
+          saveState(pogoMasterCheckbox); // 状態を保存
+        }
+        closeModal();
+      });
+
+      // 「いいえ」ボタンの処理
+      btnNo.addEventListener('click', () => {
+        closeModal();
+      });
+
+      // モーダルを閉じる共通関数
+      function closeModal() {
+        modalOverlay.style.display = 'none';
+        localStorage.setItem('pogoVisited', 'true'); // 訪問済みにする
+        updateProgress(); // プログレスバーを更新
+      }
+      // ▲▲▲ ここまで ▲▲▲
       // 初期化処理
       loadState();       // 保存された状態を復元
       updateProgress();  // 初期進捗を表示
@@ -310,6 +416,7 @@
 
 </body>
 </html>
+
 
 
 
