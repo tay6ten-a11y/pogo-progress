@@ -309,7 +309,7 @@
   </footer>
   
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
       const modalOverlay = document.getElementById('first-visit-modal');
       const btnYes = document.getElementById('pogo-master-yes');
       const btnNo = document.getElementById('pogo-master-no');
@@ -319,6 +319,9 @@
       const totalTasks = taskCheckboxes.length;
       const resetButton = document.getElementById('reset-button');
       const pogoMasterCheckbox = document.getElementById('task46'); // task46を直接取得
+
+      // ローカルストレージキーの定義
+      const PROMPT_FLAG_KEY = 'pogoMasterPrompted';
 
       // 進捗を更新する関数
       function updateProgress() {
@@ -348,13 +351,11 @@
       function loadState() {
         let checkedCount = 0;
         taskCheckboxes.forEach(checkbox => {
-          // localStorage.getItem(id)は文字列の"true"か"false"を返すか、nullを返す
           const saved = localStorage.getItem(checkbox.id);
           if (saved === 'true') {
             checkbox.checked = true;
             checkedCount++;
           } else if (saved === 'false') {
-                 // 明示的に'false'が保存されている場合も未チェック状態を復元
             checkbox.checked = false;
           }
         });
@@ -364,6 +365,8 @@
       // モーダルを閉じる共通関数
       function closeModal() {
         modalOverlay.style.display = 'none';
+        // モーダルを閉じたら、専用フラグを記録
+        localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
         updateProgress(); 
       }
 
@@ -372,42 +375,42 @@
         if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
           taskCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
-            localStorage.removeItem(checkbox.id); // すべて削除して初期状態に戻す
+            localStorage.removeItem(checkbox.id); // すべて削除
           });
+          // モーダルのフラグも削除し、次回進捗0%で再表示可能にする
+          localStorage.removeItem(PROMPT_FLAG_KEY);
           updateProgress();
         }
       }
       
-      // ▼▼▼ 初期化処理とモーダル表示ロジックの調整 ▼▼▼
+      // ▼▼▼ 初期化処理とモーダル表示ロジック (最終修正) ▼▼▼
       const checkedTasksOnLoad = loadState();
+      const hasPrompted = localStorage.getItem(PROMPT_FLAG_KEY);
       
-      // 「ポゴマスターである」(task46)が未チェックかつ、チェックされているタスクが0個の場合のみモーダルを表示する
-      // loadStateが実行された後、pogoMasterCheckbox.checkedはストレージの状態を反映している
-      // task46が未チェック AND 他のタスクも未チェック（合計0）なら表示
-      if (checkedTasksOnLoad === 0 && !pogoMasterCheckbox.checked) {
+      // 進捗が0%（すべてのタスクが未チェック）かつ、プロンプト表示フラグがない場合のみ表示
+      if (checkedTasksOnLoad === 0 && !hasPrompted) {
         modalOverlay.style.display = 'flex';
       } else {
         updateProgress();
       }
-      // ▲▲▲ 初期化ロジックはこれでOK ▲▲▲
+      // ▲▲▲ 初期化ロジック ▲▲▲
 
       // 「はい」ボタンの処理 (task46をチェック)
       btnYes.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = true;
-          saveState(pogoMasterCheckbox); // trueを保存 -> checkedTasksOnLoadが1以上になる
+          saveState(pogoMasterCheckbox); // trueを保存
         }
-        closeModal();
+        closeModal(); // フラグを記録してモーダルを閉じる
       });
 
-      // 「いいえ」ボタンの処理 (修正: task46の未チェック状態を明示的に保存)
+      // 「いいえ」ボタンの処理 (task46は未チェックのまま)
       btnNo.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
-          pogoMasterCheckbox.checked = false; // 未チェック状態を保証
-          // falseという文字列を保存することで、次回ロード時に task46 のデータが存在することを示す
-          localStorage.setItem(pogoMasterCheckbox.id, 'false'); 
+          pogoMasterCheckbox.checked = false; 
+          saveState(pogoMasterCheckbox); // falseを保存
         }
-        closeModal();
+        closeModal(); // フラグを記録してモーダルを閉じる
       });
       
       // チェック変更時に保存＆更新
@@ -425,6 +428,7 @@
 
 </body>
 </html>
+
 
 
 
