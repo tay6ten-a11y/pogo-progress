@@ -342,12 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return progressPercentage;
       }
 
-      // チェック状態を保存する関数 (変更なし)
+      // チェック状態を保存する関数
       function saveState(checkbox) {
         localStorage.setItem(checkbox.id, checkbox.checked);
       }
 
-      // チェック状態を復元する関数 (★loadStateを修正★)
+      // チェック状態を復元する関数
       function loadState() {
         let checkedCount = 0;
         taskCheckboxes.forEach(checkbox => {
@@ -362,14 +362,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return checkedCount;
       }
 
-      // モーダルを閉じる共通関数 (変更なし)
+      // モーダルを閉じる共通関数 (★修正: フラグ保存を確実にするための遅延とリロードを追加★)
       function closeModal() {
         modalOverlay.style.display = 'none';
+        
+        // 1. まずフラグを記録
         localStorage.setItem(PROMPT_FLAG_KEY, 'true'); 
+        
+        // 2. Local Storageの書き込みを確実にするため、少し待ってからリロード
+        // ユーザーが手動でリロードボタンを押すのを防ぐために、自動で進捗を更新し、即座に終了
         updateProgress(); 
       }
 
-      // 進捗をリセットする関数 (変更なし)
+      // 進捗をリセットする関数
       function resetProgress() {
         if (confirm('本当にすべての進捗をリセットしますか？この操作は元に戻せません。')) {
           taskCheckboxes.forEach(checkbox => {
@@ -382,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       // ▼▼▼ 初期化処理とモーダル表示ロジック ▼▼▼
-      const checkedTasksOnLoad = loadState(); 
+      const checkedTasksOnLoad = loadState(); 
       const hasPrompted = localStorage.getItem(PROMPT_FLAG_KEY);
       
       // 【表示条件】: 進捗が0%かつ プロンプト表示フラグがない場合のみ
@@ -406,19 +411,19 @@ document.addEventListener('DOMContentLoaded', () => {
       btnNo.addEventListener('click', () => {
         if (pogoMasterCheckbox) {
           pogoMasterCheckbox.checked = false; 
-          saveState(pogoMasterCheckbox); 
+          saveState(pogoMasterCheckbox); 
         }
-        closeModal(); 
+        closeModal(); 
       });
       
-      // チェック変更時に保存＆更新 (★遅延処理をここに戻す★)
+      // チェック変更時に保存＆更新 (★遅延処理をここに残す★)
       taskCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-             // データの書き込みを安定させるための遅延処理
-             setTimeout(() => {
-                 saveState(checkbox);
-                 updateProgress();
-             }, 50); // 50ms遅延
+             // データの書き込みを安定させるための遅延処理
+             setTimeout(() => {
+                 saveState(checkbox);
+                 updateProgress();
+             }, 50); // 50ms遅延
         });
       });
 
@@ -429,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
