@@ -366,6 +366,12 @@
       // ボタンがクリックされたときの処理
       function handleModalClick(isYes) {
         if (isYes) {
+          const task46Checkbox = document.getElementById('task46');
+        if (task46Checkbox) {
+            task46Checkbox.checked = true; // チェックを入れる
+            saveState(task46Checkbox);     // 状態を保存
+            updateProgress();              // 進捗を更新
+        }
             alert('頑張りましょう！Pogo Legendを目指して！');
         } else {
             alert('大丈夫、最初はみんなそうです！コツコツ頑張りましょう！');
@@ -390,6 +396,7 @@
 
 </body>
 </html>
+
 
 
 
